@@ -17,7 +17,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @EqualsAndHashCode(of = "id")
-@Entity//saying that Person mapping to table//Necessary#1
+@Entity//saying that Person mapping to table//Necessary#1      // to default here (name= "Person") as name of class
 @Table(name = "persons")
 public class Person {
 	@Id//Necessary#2

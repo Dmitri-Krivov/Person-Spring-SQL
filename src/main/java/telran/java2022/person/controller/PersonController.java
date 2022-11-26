@@ -1,6 +1,5 @@
 package telran.java2022.person.controller;
 
-import javax.transaction.Transactional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -49,25 +48,21 @@ public class PersonController {
 	}
 
 	@GetMapping("/name/{name}")
-	@Transactional
 	public Iterable<PersonDto> findPersonByName(@PathVariable String name) {
 		return personService.findPersonsByName(name);
 	}
 
 	@GetMapping("/ages/{minAge}/{maxAge}")
-	@Transactional
 	public Iterable<PersonDto> findPersonByAge(@PathVariable Integer minAge, @PathVariable Integer maxAge) {
 		return personService.findPersonsBetweenAge(minAge, maxAge);
 	}
 
 	@GetMapping("/city/{city}")
-	@Transactional
 	public Iterable<PersonDto> findPersonByCity(@PathVariable String city) {
 		return personService.findPersonsByCity(city);
 	}
 	
 	@GetMapping("/population/city")
-	@Transactional
 	public Iterable<CityPopulationDto> getCitiesPopulation() {
 		return personService.getCitiesPopulation();
 	}

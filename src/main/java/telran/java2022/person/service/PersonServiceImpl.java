@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
 import telran.java2022.person.dao.PersonRepository;
@@ -22,8 +23,15 @@ public class PersonServiceImpl implements PersonService {
 	final ModelMapper modelMapper;
 
 	@Override
+	@Transactional
 	public Boolean addPerson(PersonDto personDto) {
+		
+		if(personRepository.existsById(personDto.getId())) {
+			return false;
+		}
+		
 		personRepository.save(modelMapper.map(personDto, Person.class));
+		
 		return true;
 	}
 
@@ -34,6 +42,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional
 	public PersonDto removePerson(Integer id) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		personRepository.delete(person);
@@ -41,21 +50,25 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional
 	public PersonDto updatePersonName(Integer id, String name) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		person.setName(name);
-		personRepository.save(person);
+//		personRepository.save(person);//If we write @Transactional then we could not write save
 		return modelMapper.map(person, PersonDto.class);
 	}
 
 	@Override
+	@Transactional
 	public PersonDto updatePersonAddress(Integer id, AddressDto addressDto) {
 		Person person = personRepository.findById(id).orElseThrow(PersonNotFoundException::new);
 		person.setAddress(modelMapper.map(addressDto, Address.class));
-		return modelMapper.map(personRepository.save(person), PersonDto.class);
+//		personRepository.save(person);//If we write @Transactional then we could not write save
+		return modelMapper.map(person, PersonDto.class);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Iterable<PersonDto> findPersonsByCity(String city) {
 		return personRepository.findAllByAddressCity(city)
 				.map(p -> modelMapper.map(p, PersonDto.class))
@@ -63,6 +76,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Iterable<PersonDto> findPersonsByName(String name) {
 		return personRepository.findAllByName(name)
 				.map(p -> modelMapper.map(p, PersonDto.class))
@@ -70,6 +84,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Iterable<PersonDto> findPersonsBetweenAge(Integer minAge, Integer maxAge) {
 		LocalDate max = LocalDate.now().minusYears(minAge);
 		LocalDate min = LocalDate.now().minusYears(maxAge);
@@ -80,8 +95,10 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Iterable<CityPopulationDto> getCitiesPopulation() {
-		return personRepository.getCitiesPopulation().map(p -> modelMapper
-				.map(p, CityPopulationDto.class))
-				.collect(Collectors.toList());
+//		return personRepository.getCitiesPopulation().map(p -> modelMapper
+//				.map(p, CityPopulationDto.class))
+//				.collect(Collectors.toList());
+		
+		return personRepository.getCitiesPopulation();
 	}
 }
