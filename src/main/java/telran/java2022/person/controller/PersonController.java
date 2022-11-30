@@ -1,6 +1,5 @@
 package telran.java2022.person.controller;
 
-
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,18 +19,19 @@ import telran.java2022.person.service.PersonService;
 @RequestMapping("/person")
 @RequiredArgsConstructor
 public class PersonController {
-	
+
 	final PersonService personService;
-	
+
 	@PostMapping
 	public Boolean addPerson(@RequestBody PersonDto personDto) {
 		return personService.addPerson(personDto);
 	}
-	
+
 	@GetMapping("/{id}")
 	public PersonDto findPerson(@PathVariable Integer id) {
 		return personService.findPersonById(id);
 	}
+
 	@DeleteMapping("/{id}")
 	public PersonDto deletePerson(@PathVariable Integer id) {
 		return personService.removePerson(id);
@@ -61,10 +61,20 @@ public class PersonController {
 	public Iterable<PersonDto> findPersonByCity(@PathVariable String city) {
 		return personService.findPersonsByCity(city);
 	}
-	
+
 	@GetMapping("/population/city")
 	public Iterable<CityPopulationDto> getCitiesPopulation() {
 		return personService.getCitiesPopulation();
+	}
+
+	@GetMapping("/salary/{min}/{max}")
+	public Iterable<PersonDto> findEmployeeBySalary(@PathVariable Integer min, @PathVariable Integer max) {
+		return personService.findEmployeeBySalary(min, max);
+	}
+
+	@GetMapping("/children")
+	public Iterable<PersonDto> findAllChildren() {
+		return personService.getChildren();
 	}
 
 }
